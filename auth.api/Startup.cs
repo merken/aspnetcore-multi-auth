@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Authorization;
 using auth.api.Security.MyDb;
 using auth.api.Security.AzureAd;
 using auth.api.Security;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 namespace auth.api
 {
@@ -39,9 +40,8 @@ namespace auth.api
                 .AddMvc()
                 .AddFilterProvider((serviceProvider) =>
                 {
-                    var provider = serviceProvider.GetService<IAuthorizationPolicyProvider>();
-                    var azureAdAuthorizeFilter = new AzureAdAuthFilter(provider);
-                    var myAuthorizeFilter = new MyDbAuthorizeFilter(provider);
+                    var azureAdAuthorizeFilter = new AuthorizeFilter(new AuthorizeData[] { new AuthorizeData { AuthenticationSchemes = Constants.AzureAdScheme } });
+                    var myAuthorizeFilter = new AuthorizeFilter(new AuthorizeData[] { new AuthorizeData { AuthenticationSchemes = Constants.MyDbScheme } });
 
                     var filterProviderOptions = new FilterProviderOption[]{
                         new FilterProviderOption{

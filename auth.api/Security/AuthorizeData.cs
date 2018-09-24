@@ -4,6 +4,7 @@ namespace auth.api.Security
 {
     public class AuthorizeData : IAuthorizeData
     {
+        public AuthorizeData(){}
         public AuthorizeData(string policy)
         {
             this.Policy = policy;
