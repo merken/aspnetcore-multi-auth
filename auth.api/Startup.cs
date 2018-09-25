@@ -10,10 +10,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using auth.api.Extensions;
 using auth.api.Services;
 using Microsoft.AspNetCore.Authorization;
-using auth.api.Security.MyDb;
 using auth.api.Security.AzureAd;
 using auth.api.Security;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -35,27 +33,8 @@ namespace auth.api
             services.AddTransient<ICustomAuthenticationService, MyDbAuthenticationService>();
 
             services
-                .AddMyDbAuthorization() // ==> Adds the Policy, Scheme and custom authentication using a ICustomAuthenticationService
                 .AddAzureAdAuthorization(Configuration) // ==> Adds the Policy, custom Bearer Scheme using JWT
                 .AddMvc()
-                .AddFilterProvider((serviceProvider) =>
-                {
-                    var azureAdAuthorizeFilter = new AuthorizeFilter(new AuthorizeData[] { new AuthorizeData { AuthenticationSchemes = Constants.AzureAdScheme } });
-                    var myAuthorizeFilter = new AuthorizeFilter(new AuthorizeData[] { new AuthorizeData { AuthenticationSchemes = Constants.MyDbScheme } });
-
-                    var filterProviderOptions = new FilterProviderOption[]{
-                        new FilterProviderOption{
-                            RoutePrefix = "api/users",
-                            Filter = azureAdAuthorizeFilter
-                        },
-                        new FilterProviderOption{
-                            RoutePrefix = "api/data",
-                            Filter = myAuthorizeFilter
-                        }
-                    };
-
-                    return new AuthenticationFilterProvider(filterProviderOptions);
-                })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
@@ -70,7 +49,7 @@ namespace auth.api
             {
                 app.UseHsts();
             }
-
+            app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseMvc();
         }
