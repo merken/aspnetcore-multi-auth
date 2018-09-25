@@ -18,10 +18,10 @@ namespace auth.api.Security.AzureAd
                 })
             .AddAuthentication(options =>
                 {
-                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultAuthenticateScheme = Constants.AzureAdScheme;
+                    options.DefaultChallengeScheme = Constants.AzureAdScheme;
                 })
-            .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+            .AddJwtBearer(Constants.AzureAdScheme, options =>
                 {
                     options.Authority = String.Format(configuration["Authentication:Authority"], configuration["Authentication:Tenant"]);
                     options.Audience = configuration["Authentication:ClientId"];
@@ -33,7 +33,7 @@ namespace auth.api.Security.AzureAd
         public static AuthorizationOptions AddAzureAdPolicy(this AuthorizationOptions options)
         {
             var policy = new AuthorizationPolicyBuilder()
-                .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+                .AddAuthenticationSchemes(Constants.AzureAdScheme)
                 .RequireAuthenticatedUser()
                 .Build();
 

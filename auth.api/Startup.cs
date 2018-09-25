@@ -49,7 +49,6 @@ namespace auth.api
             {
                 app.UseHsts();
             }
-            app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseMvc();
         }

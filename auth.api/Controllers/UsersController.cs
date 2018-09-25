@@ -11,7 +11,7 @@ namespace auth.api.Controllers
 {
     [Route("api/users")]
     [ApiController]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = Constants.AzureAdScheme)]
     public class UsersController : ControllerBase
     {
         // GET api/values
