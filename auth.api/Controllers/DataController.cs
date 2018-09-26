@@ -10,6 +10,7 @@ namespace auth.api.Controllers
 {
     [Route("api/data")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = Constants.MyDbScheme)]
     public class DataController : ControllerBase
     {
         [HttpGet]

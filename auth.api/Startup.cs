@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Authorization;
 using auth.api.Security.AzureAd;
 using auth.api.Security;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using auth.api.Security.MyDb;
 
 namespace auth.api
 {
@@ -33,6 +34,7 @@ namespace auth.api
             services.AddTransient<ICustomAuthenticationService, MyDbAuthenticationService>();
 
             services
+                .AddMyDbAuthorization() // ==> Adds the Policy, Scheme and custom authentication using a ICustomAuthenticationService
                 .AddAzureAdAuthorization(Configuration) // ==> Adds the Policy, custom Bearer Scheme using JWT
                 .AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
