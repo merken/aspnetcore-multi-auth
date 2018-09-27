@@ -10,13 +10,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using auth.api.Extensions;
 using auth.api.Services;
 using Microsoft.AspNetCore.Authorization;
-using auth.api.Security.MyDb;
 using auth.api.Security.AzureAd;
 using auth.api.Security;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using auth.api.Security.MyDb;
+using auth.api.Extensions;
 
 namespace auth.api
 {
@@ -70,7 +70,6 @@ namespace auth.api
             {
                 app.UseHsts();
             }
-
             app.UseHttpsRedirection();
             app.UseMvc();
         }

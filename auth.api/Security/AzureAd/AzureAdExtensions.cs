@@ -1,5 +1,4 @@
 using System;
-using auth.api.Extensions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -19,8 +18,8 @@ namespace auth.api.Security.AzureAd
                 })
             .AddAuthentication(options =>
                 {
-                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultAuthenticateScheme = Constants.AzureAdScheme;
+                    options.DefaultChallengeScheme = Constants.AzureAdScheme;
                 })
             .AddJwtBearer(Constants.AzureAdScheme, options =>
                 {

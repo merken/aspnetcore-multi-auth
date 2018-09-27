@@ -1,6 +1,5 @@
 using System;
 using System.Security.Claims;
-using auth.api.Extensions;
 using auth.api.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
