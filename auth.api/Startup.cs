@@ -16,6 +16,7 @@ using auth.api.Security.AzureAd;
 using auth.api.Security;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using auth.api.Security.MyDb;
+using auth.api.Extensions;
 
 namespace auth.api
 {
@@ -34,8 +35,27 @@ namespace auth.api
             services.AddTransient<ICustomAuthenticationService, MyDbAuthenticationService>();
 
             services
+                .AddMyDbAuthorization() // ==> Adds the Policy, Scheme and custom authentication using a ICustomAuthenticationService
                 .AddAzureAdAuthorization(Configuration) // ==> Adds the Policy, custom Bearer Scheme using JWT
-                .AddMvc(options => options.AddGlobalAzureAuthentication())
+                .AddMvc()
+                .AddFilterProvider((serviceProvider) =>
+                {
+                    var azureAdAuthorizeFilter = new AuthorizeFilter(new AuthorizeData[] { new AuthorizeData { AuthenticationSchemes = Constants.AzureAdScheme } });
+                    var myAuthorizeFilter = new AuthorizeFilter(new AuthorizeData[] { new AuthorizeData { AuthenticationSchemes = Constants.MyDbScheme } });
+
+                    var filterProviderOptions = new FilterProviderOption[]{
+                        new FilterProviderOption{
+                            RoutePrefix = "api/users",
+                            Filter = azureAdAuthorizeFilter
+                        },
+                        new FilterProviderOption{
+                            RoutePrefix = "api/data",
+                            Filter = myAuthorizeFilter
+                        }
+                    };
+
+                    return new AuthenticationFilterProvider(filterProviderOptions);
+                })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
