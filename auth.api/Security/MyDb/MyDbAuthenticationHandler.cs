@@ -11,7 +11,7 @@ using Microsoft.Net.Http.Headers;
 
 namespace auth.api.Security.MyDb
 {
-    public class MyDbAuthenticationHandler:AuthenticationHandler<MyDbAuthenticationOptions>
+    public class MyDbAuthenticationHandler : AuthenticationHandler<MyDbAuthenticationOptions>
     {
         private readonly IServiceProvider serviceProvider;
 
@@ -33,7 +33,6 @@ namespace auth.api.Security.MyDb
 
         protected override Task<object> CreateEventsAsync() => Task.FromResult<object>(new MyDbAuthenticationEvents());
 
-
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
             string authorizationHeader = Request.Headers["Authorization"];
@@ -51,9 +50,7 @@ namespace auth.api.Security.MyDb
 
             if (string.IsNullOrEmpty(credentials))
             {
-                const string noCredentialsMessage = "No credentials";
-                Logger.LogInformation(noCredentialsMessage);
-                return AuthenticateResult.Fail(noCredentialsMessage);
+                return AuthenticateResult.Fail("Credentials not provided");
             }
 
             try
@@ -106,7 +103,7 @@ namespace auth.api.Security.MyDb
         {
             if (!Request.IsHttps)
             {
-                const string insecureProtocolMessage = "Request is HTTP, Basic Authentication will not respond.";
+                const string insecureProtocolMessage = "Request is HTTP, MyDb Authentication will not respond.";
                 Logger.LogInformation(insecureProtocolMessage);
                 Response.StatusCode = 500;
                 var encodedResponseText = Encoding.UTF8.GetBytes(insecureProtocolMessage);
