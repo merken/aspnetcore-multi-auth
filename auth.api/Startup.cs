@@ -34,9 +34,8 @@ namespace auth.api
             services.AddTransient<ICustomAuthenticationService, MyDbAuthenticationService>();
 
             services
-                .AddMyDbAuthorization() // ==> Adds the Policy, Scheme and custom authentication using a ICustomAuthenticationService
                 .AddAzureAdAuthorization(Configuration) // ==> Adds the Policy, custom Bearer Scheme using JWT
-                .AddMvc()
+                .AddMvc(options => options.AddGlobalAzureAuthentication())
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
