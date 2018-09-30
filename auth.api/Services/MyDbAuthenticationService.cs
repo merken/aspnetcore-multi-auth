@@ -25,9 +25,15 @@ namespace auth.api.Services
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
+
                 var command = connection.CreateCommand();
+                var parameter = command.CreateParameter();
+                parameter.ParameterName = "username";
+                parameter.Value = username;
+                command.Parameters.Add(parameter);
+
                 command.CommandType = CommandType.Text;
-                command.CommandText = $"SELECT TOP 1 Username, Password FROM Authentication WHERE Username = '{username}'";
+                command.CommandText = $"SELECT TOP 1 Username, Password FROM Authentication WHERE Username = @username";
 
                 var reader = await command.ExecuteReaderAsync();
                 if (await reader.ReadAsync())
