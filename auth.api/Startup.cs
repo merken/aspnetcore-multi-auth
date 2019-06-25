@@ -16,6 +16,8 @@ using auth.api.Security.AzureAd;
 using auth.api.Security;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using auth.api.Security.MyDb;
+using Microsoft.AspNetCore.Http;
+using WebApiContrib.Core;
 using auth.api.Extensions;
 
 namespace auth.api
@@ -29,49 +31,52 @@ namespace auth.api
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<ICustomAuthenticationService, MyDbAuthenticationService>();
-
-            services
-                .AddMyDbAuthorization() // ==> Adds the Policy, Scheme and custom authentication using a ICustomAuthenticationService
-                .AddAzureAdAuthorization(Configuration) // ==> Adds the Policy, custom Bearer Scheme using JWT
-                .AddMvc()
-                .AddFilterProvider((serviceProvider) =>
-                {
-                    var azureAdAuthorizeFilter = new AuthorizeFilter(new AuthorizeData[] { new AuthorizeData { AuthenticationSchemes = Constants.AzureAdScheme } });
-                    var myAuthorizeFilter = new AuthorizeFilter(new AuthorizeData[] { new AuthorizeData { AuthenticationSchemes = Constants.MyDbScheme } });
-
-                    var filterProviderOptions = new FilterProviderOption[]{
-                        new FilterProviderOption{
-                            RoutePrefix = "api/users",
-                            Filter = azureAdAuthorizeFilter
-                        },
-                        new FilterProviderOption{
-                            RoutePrefix = "api/data",
-                            Filter = myAuthorizeFilter
-                        }
-                    };
-
-                    return new AuthenticationFilterProvider(filterProviderOptions);
-                })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            //Nothing to do here
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())
+            //Configure the branches
+            app.UseBranchWithServices("/api1", (services) =>
             {
-                app.UseDeveloperExceptionPage();
-            }
-            else
+                services
+                    .AddSingleton<IConfiguration>(Configuration)
+                    .AddTransient<ICustomAuthenticationService, MyDb1AuthenticationService>()
+                    .AddMyDbAuthorization<MyDb1AuthenticationHandler>(Constants.MyDb1Scheme) // ==> Adds the Policy, Scheme and custom authentication using a ICustomAuthenticationService
+                    .AddMvc()
+                    .AddAllControllersOfAssemblyAsFeatureProvider(typeof(Startup).Assembly)
+                ;
+            },
+            (appBuilder) =>
             {
-                app.UseHsts();
-            }
-            app.UseHttpsRedirection();
-            app.UseMvc();
+                appBuilder.UseDeveloperExceptionPage();
+                appBuilder.UseMvc();
+            });
+
+            app.UseBranchWithServices("/api2", (services) =>
+            {
+                services
+                    .AddSingleton<IConfiguration>(Configuration)
+                    .AddTransient<ICustomAuthenticationService, MyDb2AuthenticationService>()
+                    .AddMyDbAuthorization<MyDb2AuthenticationHandler>(Constants.MyDb2Scheme) // ==> Adds the Policy, Scheme and custom authentication using a ICustomAuthenticationService
+                    .AddMvc()
+                    .AddAllControllersOfAssemblyAsFeatureProvider(typeof(Startup).Assembly)
+                ;
+
+            },
+            (appBuilder) =>
+            {
+                appBuilder.UseDeveloperExceptionPage();
+                appBuilder.UseMvc();
+            });
+
+            app.Run(async c =>
+            {
+                await c.Response.WriteAsync("Branches configured!");
+            });
         }
     }
 }

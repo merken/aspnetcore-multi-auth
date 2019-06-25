@@ -11,9 +11,36 @@ using Microsoft.Net.Http.Headers;
 
 namespace auth.api.Security.MyDb
 {
-    public class MyDbAuthenticationHandler : AuthenticationHandler<MyDbAuthenticationOptions>
+
+    public class MyDb1AuthenticationHandler : MyDbAuthenticationHandler
+    {
+        protected override string GetScheme() => Constants.MyDb1Scheme;
+
+        public MyDb1AuthenticationHandler(
+            IOptionsMonitor<MyDbAuthenticationOptions> options,
+            ILoggerFactory logger,
+            UrlEncoder encoder,
+            ISystemClock clock,
+            IServiceProvider serviceProvider) : base(options, logger, encoder, clock, serviceProvider) { }
+    }
+
+    public class MyDb2AuthenticationHandler : MyDbAuthenticationHandler
+    {
+        protected override string GetScheme() => Constants.MyDb2Scheme;
+
+        public MyDb2AuthenticationHandler(
+            IOptionsMonitor<MyDbAuthenticationOptions> options,
+            ILoggerFactory logger,
+            UrlEncoder encoder,
+            ISystemClock clock,
+            IServiceProvider serviceProvider) : base(options, logger, encoder, clock, serviceProvider) { }
+    }
+
+    public abstract class MyDbAuthenticationHandler : AuthenticationHandler<MyDbAuthenticationOptions>
     {
         private readonly IServiceProvider serviceProvider;
+
+        protected abstract string GetScheme();
 
         public MyDbAuthenticationHandler(
             IOptionsMonitor<MyDbAuthenticationOptions> options,
@@ -41,12 +68,12 @@ namespace auth.api.Security.MyDb
                 return AuthenticateResult.NoResult();
             }
 
-            if (!authorizationHeader.StartsWith(Constants.MyDbScheme + ' ', StringComparison.OrdinalIgnoreCase))
+            if (!authorizationHeader.StartsWith(GetScheme() + ' ', StringComparison.OrdinalIgnoreCase))
             {
                 return AuthenticateResult.NoResult();
             }
 
-            string credentials = authorizationHeader.Substring(Constants.MyDbScheme.Length).Trim();
+            string credentials = authorizationHeader.Substring(GetScheme().Length).Trim();
 
             if (string.IsNullOrEmpty(credentials))
             {
@@ -103,7 +130,7 @@ namespace auth.api.Security.MyDb
         {
             if (!Request.IsHttps)
             {
-                const string insecureProtocolMessage = "Request is HTTP, MyDb Authentication will not respond.";
+                var insecureProtocolMessage = $"Request is HTTP, {GetScheme()} Authentication will not respond.";
                 Logger.LogInformation(insecureProtocolMessage);
                 Response.StatusCode = 500;
                 var encodedResponseText = Encoding.UTF8.GetBytes(insecureProtocolMessage);
@@ -113,7 +140,7 @@ namespace auth.api.Security.MyDb
             {
                 Response.StatusCode = 401;
 
-                var headerValue = Constants.MyDbScheme + $" USERNAME;PASSWORD";
+                var headerValue = GetScheme() + $" USERNAME;PASSWORD";
                 Response.Headers.Append(HeaderNames.WWWAuthenticate, headerValue);
             }
 

@@ -9,10 +9,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace auth.api.Controllers
 {
-    [Route("api/users")]
+    [Route("[controller]")]
     [ApiController]
-    // [Authorize(AuthenticationSchemes = Constants.AzureAdScheme)]
-    // [AzureAdAuthFilter]
+    [Authorize(Constants.MyDbPolicy)]
     public class UsersController : ControllerBase
     {
         // GET api/values

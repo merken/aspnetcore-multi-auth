@@ -10,18 +10,38 @@ namespace auth.api.Services
         Task<bool> AuthenticateUserAsync(string username, string password);
     }
 
-    public class MyDbAuthenticationService : ICustomAuthenticationService
+    public class MyDb1AuthenticationService : MyDbAuthenticationService
     {
-        private readonly IConfiguration configuration;
+        public MyDb1AuthenticationService(IConfiguration configuration) : base(configuration)
+        {
+        }
+
+        protected override string GetConnectionString() => configuration.GetConnectionString("MyDb1");
+    }
+
+    public class MyDb2AuthenticationService : MyDbAuthenticationService
+    {
+        public MyDb2AuthenticationService(IConfiguration configuration) : base(configuration)
+        {
+        }
+
+        protected override string GetConnectionString() => configuration.GetConnectionString("MyDb2");
+    }
+
+    public abstract class MyDbAuthenticationService : ICustomAuthenticationService
+    {
+        protected readonly IConfiguration configuration;
 
         public MyDbAuthenticationService(IConfiguration configuration)
         {
             this.configuration = configuration;
         }
 
-        public async Task<bool> AuthenticateUserAsync(string username, string password)
+        protected abstract string GetConnectionString();
+
+        public async virtual Task<bool> AuthenticateUserAsync(string username, string password)
         {
-            var connectionString = configuration.GetConnectionString("MyDb");
+            var connectionString = GetConnectionString();
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();

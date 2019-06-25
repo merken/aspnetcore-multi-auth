@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace auth.api.Controllers
 {
-    [Route("api/data")]
+    [Route("[controller]")]
     [ApiController]
-    // [Authorize(AuthenticationSchemes = Constants.MyDbScheme)]
+    [Authorize(Constants.MyDbPolicy)]
     public class DataController : ControllerBase
     {
         [HttpGet]

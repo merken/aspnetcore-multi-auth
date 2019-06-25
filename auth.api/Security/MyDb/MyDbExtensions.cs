@@ -9,15 +9,15 @@ namespace auth.api.Security.MyDb
 {
     public static class MyDbExtensions
     {
-        public static IServiceCollection AddMyDbAuthorization(this IServiceCollection serviceCollection)
+        public static IServiceCollection AddMyDbAuthorization<THandler>(this IServiceCollection serviceCollection, string scheme) where THandler : MyDbAuthenticationHandler
         {
             serviceCollection
             .AddAuthorization(options =>
                 {
-                    options.AddMyDbPolicy();
+                    options.AddMyDbPolicy(scheme);
                 })
-            .AddAuthentication(Constants.MyDbScheme)
-            .AddScheme<MyDbAuthenticationOptions, MyDbAuthenticationHandler>(Constants.MyDbScheme, options =>
+            .AddAuthentication(scheme)
+            .AddScheme<MyDbAuthenticationOptions, THandler>(scheme, options =>
                 {
                     options.Events = new MyDbAuthenticationEvents
                     {
@@ -56,10 +56,10 @@ namespace auth.api.Security.MyDb
             return serviceCollection;
         }
 
-        public static AuthorizationOptions AddMyDbPolicy(this AuthorizationOptions options)
+        public static AuthorizationOptions AddMyDbPolicy(this AuthorizationOptions options, string scheme)
         {
             var policy = new AuthorizationPolicyBuilder()
-                .AddAuthenticationSchemes(Constants.MyDbScheme)
+                .AddAuthenticationSchemes(scheme)
                 .RequireAuthenticatedUser()
                 .Build();
 
