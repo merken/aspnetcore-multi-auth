@@ -34,7 +34,7 @@ namespace auth.api
                     .AddTransient<ICustomAuthenticationService, MyDb1AuthenticationService>()
                     .AddMyDbAuthorization<MyDb1AuthenticationHandler>(Constants.MyDb1Scheme) // ==> Adds the Policy, Scheme and custom authentication using a ICustomAuthenticationService
                     .AddMvc()
-                    .AddAllControllersOfAssemblyAsFeatureProvider(typeof(Startup).Assembly)
+                    .AddControllersFromRouteBranch(typeof(Startup).Assembly, "/api1")
                 ;
             },
             (appBuilder) =>
@@ -50,7 +50,7 @@ namespace auth.api
                     .AddTransient<ICustomAuthenticationService, MyDb2AuthenticationService>()
                     .AddMyDbAuthorization<MyDb2AuthenticationHandler>(Constants.MyDb2Scheme) // ==> Adds the Policy, Scheme and custom authentication using a ICustomAuthenticationService
                     .AddMvc()
-                    .AddAllControllersOfAssemblyAsFeatureProvider(typeof(Startup).Assembly)
+                    .AddControllersFromRouteBranch(typeof(Startup).Assembly, "/api2")
                 ;
             },
             (appBuilder) =>

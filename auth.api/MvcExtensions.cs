@@ -7,12 +7,12 @@ namespace auth.api
 {
     public static class MvcExtensions
     {
-        public static IMvcBuilder AddAllControllersOfAssemblyAsFeatureProvider(this IMvcBuilder builder, Assembly Assembly)
+        public static IMvcBuilder AddControllersFromRouteBranch(this IMvcBuilder builder, Assembly Assembly, string route)
         {
             return builder.ConfigureApplicationPartManager(manager =>
             {
                 manager.FeatureProviders.Clear();
-                manager.FeatureProviders.Add(new ControllerFeatureProvider());
+                manager.FeatureProviders.Add(new RouteBranchControllerFeatureProvider(route));
             }).AddApplicationPart(Assembly);
         }
     }

@@ -11,6 +11,7 @@ namespace auth.api.Controllers
     [Route("[controller]")]
     [ApiController]
     [Authorize(Constants.MyDbPolicy)]
+    [RouteBranchAttribute("/api2")]
     public class UsersController : ControllerBase
     {
         // GET api/values
