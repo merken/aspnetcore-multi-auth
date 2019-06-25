@@ -5,9 +5,5 @@ namespace auth.api.Security
         public const string MyDb1Scheme = "MyDb1";
         public const string MyDb2Scheme = "MyDb2";
         public const string MyDbPolicy = "MyDb";
-
-        public const string AzureAdScheme = "AzureAd";
-        public const string AzureAdPolicy = "AzureAdPolicy";
-        public const string AzureAdBearer = "AzureAdBearer";
     }
 }

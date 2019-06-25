@@ -11,7 +11,6 @@ using Microsoft.Net.Http.Headers;
 
 namespace auth.api.Security.MyDb
 {
-
     public class MyDb1AuthenticationHandler : MyDbAuthenticationHandler
     {
         protected override string GetScheme() => Constants.MyDb1Scheme;

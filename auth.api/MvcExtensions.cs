@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace auth.api.Extensions
+namespace auth.api
 {
     public static class MvcExtensions
     {
