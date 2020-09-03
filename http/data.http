@@ -1,0 +1,2 @@
+GET  http://localhost:5000/api1/data
+Authorization: MyDb1 maarten1;peanuts

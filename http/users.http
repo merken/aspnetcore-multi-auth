@@ -1,0 +1,2 @@
+GET  http://localhost:5000/api2/users
+Authorization: MyDb2 maarten2;peanuts

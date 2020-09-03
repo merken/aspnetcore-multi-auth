@@ -8,3 +8,5 @@ dotnet run
 ```
 
 This should spin up the ASP.NET Core WebApi on https://localhost:5000.
+
+You can test all the http calls from the http folder in this repo branch using the REST Client vscode extension https://marketplace.visualstudio.com/items?itemName=humao.rest-client
